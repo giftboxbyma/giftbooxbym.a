@@ -1,0 +1,192 @@
+<img src="15cm.jpg" class="preview">
+<img src="20cm.jpg" class="preview">
+<img src="25cm.jpg" class="preview"> 
+</div>
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giftboxby.m.a</title>
+
+<style>
+body{
+margin:0;
+padding:18px;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+background:#faf6f4;
+color:#3a2f2f;
+}
+.card{
+background:#fff;
+border-radius:20px;
+padding:16px;
+margin-bottom:16px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+h1{text-align:center;margin:8px 0}
+.logo{
+width:90px;height:90px;border-radius:50%;
+object-fit:cover;display:block;margin:0 auto;
+}
+label{font-weight:600;margin-top:10px;display:block}
+select,input{
+width:100%;padding:10px;margin-top:6px;
+border-radius:12px;border:1px solid #ddd;
+}
+button{
+width:100%;padding:14px;border-radius:14px;
+border:none;background:#e6b8b1;
+font-size:16px;font-weight:700;
+}
+.price{
+font-size:22px;font-weight:800;
+text-align:center;margin:12px 0;
+}
+.small{font-size:12px;opacity:.75}
+img.preview{
+width:100%;border-radius:14px;margin-top:10px
+}
+.admin{
+display:none;
+background:#111;color:#fff;
+}
+.admin table{
+width:100%;border-collapse:collapse;font-size:12px
+}
+.admin th,.admin td{
+border-bottom:1px solid #333;
+padding:6px;text-align:left
+}
+</style>
+</head>
+
+<body>
+
+<!-- PROFIL -->
+<div class="card">
+<img src="profil.jpg" class="logo">
+<h1>Giftboxby.m.a</h1>
+<p class="small" style="text-align:center">
+Handgjort • Personligt • Instagram-style
+</p>
+</div>
+
+<!-- BILDER -->
+<div class="card">
+<b>Våra boxar</b>
+<img src="15cm.jpg" class="preview">
+<img src="20cm.jpg" class="preview">
+<img src="25cm.jpg" class="preview"> 
+</div>
+
+<!-- BESTÄLLNING -->
+<div class="card">
+<label>Form</label>
+<select id="form">
+<option>Hjärta</option>
+<option>Cirkel</option>
+</select>
+
+<label>Storlek</label>
+<select id="storlek" onchange="calc()">
+<option value="169">15 cm – 169 kr</option>
+<option value="229">20 cm – 229 kr</option>
+<option value="299">25 cm – 299 kr</option>
+</select>
+
+<label>Färg</label>
+<select id="farg">
+<option>Röd</option><option>Vinröd</option>
+<option>Vit</option><option>Lila</option>
+<option>Rosa</option><option>Svart</option>
+<option>Ljusblå</option>
+</select>
+
+<label>Tillägg</label>
+<input type="checkbox" value="5" onchange="calc()"> Fjäril (5 kr)<br>
+<input type="checkbox" value="5" onchange="calc()"> Krona (5 kr)<br>
+<input type="checkbox" value="5" onchange="calc()"> Mr & Mrs / Happy Birthday (5 kr)<br>
+<input type="checkbox" value="10" onchange="calc()"> Bokstav i pärlor/stenar (10 kr)<br>
+<input type="checkbox" value="10" onchange="calc()"> Bukett (10 kr)<br>
+
+<img src="tillagg.jpg" class="preview">
+
+<label>Rosnalle</label>
+<select id="nalle" onchange="calc()">
+<option value="0">Ingen</option>
+<option value="120">Vit – 120 kr</option>
+<option value="120">Röd – 120 kr</option>
+<option value="120">Rosa – 120 kr</option>
+<option value="120">Ljusblå – 120 kr</option>
+</select>
+
+<img src="nalle.jpg" class="preview">
+
+<p class="price" id="total">Totalpris: 169 kr</p>
+
+<p class="small">
+Leveranstid: ca 2 veckor+ beroende på tryck & material
+</p>
+
+<button onclick="order()">Beställ</button>
+</div>
+
+<!-- BETALNING -->
+<div class="card small">
+<b>Betalning</b><br>
+Swish: <b>0735454748</b><br>
+Hela beloppet betalas vid beställning.<br>
+Skriv Order-ID i meddelandet.
+</div>
+
+<!-- ADMIN -->
+<div class="card admin" id="admin">
+<h3>Admin – Beställningar</h3>
+<table id="orders"></table>
+</div>
+
+<script>
+function calc(){
+let total = parseInt(storlek.value);
+document.querySelectorAll("input[type=checkbox]:checked")
+.forEach(c=>total+=parseInt(c.value));
+total += parseInt(nalle.value);
+totalEl.innerText="Totalpris: "+total+" kr";
+}
+
+const totalEl=document.getElementById("total");
+
+function order(){
+const id="GB"+Date.now().toString().slice(-6);
+const total=totalEl.innerText;
+const data={id,form:form.value,storlek:storlek.options[storlek.selectedIndex].text,farg:farg.value,total};
+const orders=JSON.parse(localStorage.getItem("orders")||"[]");
+orders.push(data);
+localStorage.setItem("orders",JSON.stringify(orders));
+alert(
+"Tack för din beställning!\n\n"+
+"Order-ID: "+id+"\n\n"+
+total+"\n"+
+"Swisha till 0735454748\n"+
+"Skriv Order-ID som meddelande"
+);
+}
+
+function loadAdmin(){
+const orders=JSON.parse(localStorage.getItem("orders")||"[]");
+if(!orders.length) return;
+admin.style.display="block";
+ordersEl.innerHTML="<tr><th>ID</th><th>Info</th><th>Pris</th></tr>";
+orders.forEach(o=>{
+ordersEl.innerHTML+=
+`<tr><td>${o.id}</td><td>${o.form}, ${o.storlek}, ${o.farg}</td><td>${o.total}</td></tr>`;
+});
+}
+const admin=document.getElementById("admin");
+const ordersEl=document.getElementById("orders");
+loadAdmin();
+</script>
+
+</body>
+</html>
