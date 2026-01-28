@@ -71,10 +71,30 @@ Handgjort • Personligt • Instagram-style
 <!-- BILDER -->
 <div class="card">
 <b>Våra boxar</b>
-<img src="15cm.jpg" class="preview">
-<img src="20cm.jpg" class="preview">
-<img src="25cm.jpg" class="preview">
+<div class="card">
+<b>Rosnallar</b>
+
+<div class="product">
+<img src="rosnalle.jpg" class="preview">
+<span>120 kr / st</span>
 </div>
+</div>
+<div class="product">
+<img src="15cm.jpg" class="preview">
+<span>15 cm</span>
+</div>
+
+<div class="product">
+<img src="20cm.jpg" class="preview">
+<span>20 cm</span>
+</div>
+
+<div class="product">
+<img src="25cm.jpg" class="preview">
+<span>25 cm</span>
+</div>
+</div>
+
 
 <!-- BESTÄLLNING -->
 <div class="card">
@@ -107,7 +127,16 @@ Handgjort • Personligt • Instagram-style
 <input type="checkbox" value="10" onchange="calc()"> Bukett (10 kr)<br>
 
 <img src="tillagg.jpg" class="preview">
+.product {
+display: flex;
+align-items: center;
+gap: 12px;
+justify-content: center;
+}
 
+.product span {
+font-weight: bold;
+}
 <label>Rosnalle</label>
 <select id="nalle" onchange="calc()">
 <option value="0">Ingen</option>
