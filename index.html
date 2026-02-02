@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>giftboxbym.a – Beställ</title>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<style>
+:root{
+/* mjuk, lyxig rosé */
+--bg1:#fff7fb;
+--bg2:#fff2f7;
+--card: rgba(255,255,255,.78);
+--text:#1c1a1b;
+--muted:#6f5b63;
+
+--accent:#b66a86; /* rosé/mauve */
+--accent2:#e9c8d5; /* soft rosé */
+--gold:#caa26a;
+
+--border: rgba(195,145,168,.30);
+--shadow: 0 16px 50px rgba(110,45,80,.12);
+--radius: 22px;
+
+--safeBottom: env(safe-area-inset-bottom);
+--safeTop: env(safe-area-inset-top);
+}
+
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 600px at 12% 10%, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 60%),
+radial-gradient(900px 600px at 88% 0%, rgba(233,200,213,.45) 0%, rgba(255,255,255,0) 62%),
+linear-gradient(180deg,var(--bg1),var(--bg2));
+padding: 16px 16px calc(110px + var(--safeBottom));
+}
+
+.wrap{max-width:980px;margin:0 auto;}
+
+.hero{
+text-align:center;
+padding-top: calc(6px + var(--safeTop));
+margin-bottom: 12px;
+}
+
+.brandPill{
+display:inline-flex;align-items:center;gap:10px;
+padding:10px 14px;border-radius:999px;
+background: rgba(255,255,255,.70);
+border:1px solid var(--border);
+box-shadow: 0 10px 30px rgba(110,45,80,.10);
+backdrop-filter: blur(10px);
+}
+.brandDot{
+width:12px;height:12px;border-radius:999px;
+background: linear-gradient(135deg,var(--accent),var(--gold));
+box-shadow: 0 8px 20px rgba(182,106,134,.25);
+}
+.brandName{font-weight:900;letter-spacing:.25px}
+
+h1{
+margin:14px 0 6px;
+font-family: ui-serif, Georgia, "Times New Roman", serif;
+font-size: 36px;
+line-height:1.08;
+letter-spacing:.2px;
+}
+.subtitle{
+margin:0 auto 12px;
+max-width: 64ch;
+color: var(--muted);
+font-weight:650;
+line-height:1.5;
+}
+
+.badges{
+display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+margin: 10px 0 0;
+}
+.badge{
+padding:8px 14px;border-radius:999px;
+background: rgba(233,200,213,.55);
+border: 1px solid rgba(182,106,134,.18);
+color: var(--accent);
+font-weight:850;
+font-size:13px;
+white-space:nowrap;
+}
+
+.grid{
+display:grid;
+grid-template-columns: 1.05fr .95fr;
+gap:12px;
+margin-top: 14px;
+}
+@media (max-width: 900px){
+.grid{grid-template-columns:1fr;}
+}
+
+.card{
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+backdrop-filter: blur(14px);
+padding: 14px;
+}
+
+.sectionTitle{
+display:flex;align-items:center;justify-content:space-between;gap:10px;
+font-weight:900;
+margin: 0 0 10px;
+letter-spacing:.2px;
+}
+.mini{
+font-size:12px;
+color: var(--muted);
+font-weight:700;
+}
+
+.boxesRow{
+display:grid;
+grid-template-columns: repeat(3, 1fr);
+gap:10px;
+margin-bottom: 10px;
+}
+.boxImg{
+width:100%;
+aspect-ratio: 4 / 3;
+border-radius: 18px;
+border: 1px solid rgba(195,145,168,.22);
+background: rgba(255,255,255,.65);
+object-fit: cover;
+box-shadow: 0 12px 30px rgba(110,45,80,.08);
+}
+.boxCap{
+margin-top:6px;
+text-align:center;
+font-size:12px;
+color: var(--muted);
+font-weight:800;
+}
+
+label{
+display:block;
+margin: 10px 0 6px;
+font-size: 13px;
+color: var(--muted);
+font-weight:800;
+}
+input, select, textarea{
+width:100%;
+padding: 12px;
+border-radius: 14px;
+border: 1px solid rgba(195,145,168,.28);
+background: rgba(255,255,255,.86);
+font-size: 15px;
+outline:none;
+}
+input:focus, select:focus, textarea:focus{
+border-color: rgba(182,106,134,.55);
+box-shadow: 0 0 0 4px rgba(233,200,213,.45);
+}
+textarea{min-height:110px;resize:vertical}
+
+.row2{
+display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+@media (max-width: 520px){
+.row2{grid-template-columns:1fr;}
+}
+
+.divider{
+height:1px;
+background: linear-gradient(90deg, rgba(182,106,134,.10), rgba(202,162,106,.10), rgba(182,106,134,.10));
+margin: 12px 0;
+}
+
+.addonNote{
+margin-top:6px;
+font-size:12.5px;
+color: var(--muted);
+font-weight:750;
+}
+
+.note, .warn{
+margin-top: 10px;
+padding: 12px;
+border-radius: 16px;
+font-weight:900;
+display:none;
+white-space: pre-wrap;
+}
+.note{
+border: 1px solid rgba(34,197,94,.22);
+background: rgba(34,197,94,.08);
+color: #146a35;
+}
+.warn{
+border: 1px solid rgba(239,68,68,.22);
+background: rgba(239,68,68,.08);
+color: #7a1b1b;
+}
+
+.btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.btn{
+border:none;cursor:pointer;
+padding: 12px 14px;border-radius: 16px;
+font-weight:950;letter-spacing:.2px;
+}
+.btnPrimary{
+flex:1;
+color:#fff;
+background: linear-gradient(135deg, var(--accent), var(--gold));
+box-shadow: 0 14px 36px rgba(110,45,80,.16);
+}
+.btnSecondary{
+background: rgba(255,255,255,.78);
+border: 1px solid rgba(182,106,134,.20);
+color: #6a2a49;
+}
+
+/* ENDA TOTALEN (sticky) */
+.stickyTotal{
+position: fixed;
+left: 12px;
+right: 12px;
+bottom: calc(12px + var(--safeBottom));
+z-index: 50;
+background: rgba(255,255,255,.82);
+border: 1px solid rgba(202,162,106,.30);
+border-radius: 22px;
+box-shadow: 0 18px 60px rgba(110,45,80,.14);
+backdrop-filter: blur(14px);
+padding: 12px;
+display:flex;
+align-items:center;
+justify-content: space-between;
+gap:10px;
+max-width: 980px;
+margin: 0 auto;
+}
+.stickyLeft{display:flex;flex-direction:column;gap:2px;}
+.stickyTitle{font-weight:950;}
+.stickyHint{font-size:12px;color:var(--muted);font-weight:750;}
+.stickyPrice{
+font-family: ui-serif, Georgia, "Times New Roman", serif;
+font-size: 22px;
+font-weight: 1000;
+background: linear-gradient(135deg,var(--accent),var(--gold));
+-webkit-background-clip:text;
+background-clip:text;
+color: transparent;
+white-space:nowrap;
+}
+.stickyBtn{
+border:none;cursor:pointer;
+padding: 10px 12px;border-radius: 16px;
+font-weight:950;
+color:#fff;
+background: linear-gradient(135deg,var(--accent),var(--gold));
+white-space:nowrap;
+}
+
+footer{
+text-align:center;
+margin-top: 12px;
+color: var(--muted);
+font-weight:900;
+letter-spacing:.2px;
+padding-bottom: 6px;
+}
+
+/* Thank overlay (lyxig men enkel) */
+.overlay{
+position: fixed; inset:0; z-index: 200;
+display:none; align-items:center; justify-content:center;
+padding:16px;
+background: rgba(20,14,18,.42);
+backdrop-filter: blur(8px);
+}
+.modal{
+width: min(720px, 100%);
+background: rgba(255,255,255,.86);
+border: 1px solid rgba(195,145,168,.30);
+border-radius: 26px;
+box-shadow: 0 26px 90px rgba(0,0,0,.22);
+overflow:hidden;
+}
+.modalTop{
+display:flex;align-items:center;justify-content:space-between;gap:10px;
+padding:14px;
+border-bottom: 1px solid rgba(195,145,168,.18);
+}
+.x{
+width:40px;height:40px;border-radius:14px;
+border: 1px solid rgba(195,145,168,.20);
+background: rgba(255,255,255,.75);
+cursor:pointer;
+font-weight:950;
+color:#6a2a49;
+}
+.modalBody{padding:14px;}
+.modalH{
+margin:10px 0 6px;
+font-family: ui-serif, Georgia, "Times New Roman", serif;
+font-size: 30px;
+}
+.modalP{margin:0;color:var(--muted);font-weight:750;line-height:1.5;}
+.kpiRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.kpi{
+flex:1 1 190px;
+border: 1px solid rgba(195,145,168,.22);
+background: rgba(255,255,255,.78);
+border-radius: 18px;
+padding: 12px;
+}
+.kpi b{display:block;color:#6a2a49;margin-bottom:2px;}
+.kpi span{color:var(--muted);font-weight:750;font-size:13px;}
+.modalBtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<div class="hero">
+<div class="brandPill">
+<span class="brandDot"></span>
+<span class="brandName">giftboxbym.a</span>
+</div>
+
+<h1>En present som känns som en dröm ✨</h1>
+<p class="subtitle">Handgjorda giftboxar med lyxig känsla. Välj storlek, leverans och tillägg – vi fixar resten.</p>
+
+<div class="badges">
+<div class="badge">Lyxig finish</div>
+<div class="badge">Snabb återkoppling via SMS</div>
+<div class="badge">Handgjort & personligt</div>
+</div>
+</div>
+
+<div class="grid">
+<!-- VÄNSTER -->
+<div class="card">
+<div class="sectionTitle">
+<div>Våra boxar</div>
+<div class="mini">Välj storlek nedan</div>
+</div>
+
+<div class="boxesRow">
+<div>
+<img class="boxImg" src="15cm.jpg" alt="15 cm box">
+<div class="boxCap">15 cm</div>
+</div>
+<div>
+<img class="boxImg" src="20cm.jpg" alt="20 cm box">
+<div class="boxCap">20 cm</div>
+</div>
+<div>
+<img class="boxImg" src="25cm.jpg" alt="25 cm box">
+<div class="boxCap">25 cm</div>
+</div>
+</div>
+
+<label for="size">Storlek</label>
+<select id="size">
+<option value="">Välj storlek…</option>
+<option value="15">15 cm – 169 kr</option>
+<option value="20">20 cm – 229 kr</option>
+<option value="25">25 cm – 299 kr</option>
+</select>
+
+<div class="divider"></div>
+
+<div class="sectionTitle">
+<div>Tillägg</div>
+<div class="mini">valfritt</div>
+</div>
+
+<label for="addonsSelect">Välj tillägg</label>
+<select id="addonsSelect">
+<option value="" data-price="0">Inga tillägg – 0 kr</option>
+<option value="butterfly" data-price="5">Fjäril – 5 kr</option>
+<option value="crown" data-price="5">Krona – 5 kr</option>
+<option value="mrMrs" data-price="5">Mr & Mrs – 5 kr</option>
+<option value="letterRoses" data-price="10">Bokstav i rosor – 10 kr</option>
+<option value="bouquet" data-price="10">Bukett (endast röd) – 10 kr</option>
+<option value="flowerBear" data-price="15">Blomma med nalle – 15 kr</option>
+<option value="candleBear" data-price="20">Doftljusnalle – 20 kr</option>
+</select>
+<div id="addonNote" class="addonNote"></div>
+
+<div class="row2">
+<div>
+<label for="addonQty">Antal</label>
+<input id="addonQty" type="number" min="0" value="0" />
+</div>
+<div>
+<label>Info</label>
+<input value="Skriv färg i meddelandet" disabled />
+</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="sectionTitle">
+<div>Leverans</div>
+<div class="mini">DHL 80 kr / Upphämtning Malmö</div>
+</div>
+
+<label for="deliveryMethod">Välj leveranssätt</label>
+<select id="deliveryMethod">
+<option value="">Välj…</option>
+<option value="pickup">Upphämtning (Malmö)</option>
+<option value="dhl">Frakt via DHL – 80 kr</option>
+</select>
+
+<div id="shippingFields" class="hidden">
+<div class="divider"></div>
+
+<div class="sectionTitle">
+<div>Leveransadress</div>
+<div class="mini">endast DHL</div>
+</div>
+
+<div class="row2">
+<div>
+<label for="street">Gata</label>
+<input id="street" placeholder="Ex: Storgatan" />
+</div>
+<div>
+<label for="streetNo">Nr</label>
+<input id="streetNo" placeholder="Ex: 12" />
+</div>
+</div>
+
+<div class="row2">
+<div>
+<label for="zip">Postnummer</label>
+<input id="zip" placeholder="Ex: 211 12" />
+</div>
+<div>
+<label for="city">Stad</label>
+<input id="city" placeholder="Ex: Malmö" />
+</div>
+</div>
+
+<label for="company">Företag (valfritt)</label>
+<input id="company" placeholder="Ex: Företagsnamn" />
+</div>
+
+<div id="pickupInfo" class="addonNote">Vid upphämtning skickas adress/tid via SMS efter beställning.</div>
+</div>
+
+<!-- HÖGER -->
+<div class="card">
+<div class="sectionTitle">
+<div>Kontakt & önskemål</div>
+<div class="mini">behövs för order</div>
+</div>
+
+<div class="row2">
+<div>
+<label for="contactFirstName">Förnamn *</label>
+<input id="contactFirstName" placeholder="Förnamn" />
+</div>
+<div>
+<label for="contactLastName">Efternamn *</label>
+<input id="contactLastName" placeholder="Efternamn" />
+</div>
+</div>
+
+<label for="contactEmail">E-post *</label>
+<input id="contactEmail" type="email" placeholder="kund@email.com" />
+
+<label for="contactPhone">Telefon *</label>
+<input id="contactPhone" placeholder="07…" />
+
+<div class="row2">
+<div>
+<label for="deliveryDate">Önskat datum (valfritt)</label>
+<input id="deliveryDate" placeholder="Ex: 24/2" />
+</div>
+<div>
+<label for="giftNote">Presentkort-text (valfritt)</label>
+<input id="giftNote" placeholder="Ex: Till dig 💗" />
+</div>
+</div>
+
+<div class="divider"></div>
+
+<label for="message">Meddelande (färg / text / detaljer)</label>
+<textarea id="message" placeholder="Ex: ‘Bokstav A i rosa’ / ‘Krona i silver’ / ‘Leverans på fredag’…"></textarea>
+
+<div class="btnRow">
+<button id="sendBtn" class="btn btnPrimary" type="button" onclick="skickaBestallning()">
+Skicka beställning
+</button>
+<button class="btn btnSecondary" type="button" onclick="copySwishText()">
+Kopiera swish-text
+</button>
+</div>
+
+<div id="ok" class="note"></div>
+<div id="err" class="warn"></div>
+
+<div class="divider"></div>
+<div class="addonNote">
+Betalning: Swish <b>0735454748</b> (skriv <b>Order-ID</b> som meddelande).
+</div>
+</div>
+</div>
+
+<footer>giftboxbym.a</footer>
+</div>
+
+<!-- ENDA TOTALEN (sticky) -->
+<div class="stickyTotal" role="region" aria-label="Total och beställ">
+<div class="stickyLeft">
+<div class="stickyTitle">Total</div>
+<div class="stickyHint">Uppdateras direkt när du väljer</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;">
+<div class="stickyPrice"><span id="totalSticky">0</span> kr</div>
+<button class="stickyBtn" onclick="scrollToSend()">Beställ</button>
+</div>
+</div>
+
+<!-- Thank overlay -->
+<div id="overlay" class="overlay" aria-hidden="true">
+<div class="modal" role="dialog" aria-modal="true" aria-label="Tack för din beställning">
+<div class="modalTop">
+<div class="brandPill" style="padding:8px 12px;">
+<span class="brandDot"></span>
+<span class="brandName">giftboxbym.a</span>
+</div>
+<button class="x" onclick="closeThank()">✕</button>
+</div>
+<div class="modalBody">
+<h2 class="modalH">Tack! Din beställning är skickad ✨</h2>
+<p class="modalP">Spara gärna order-id och swish-texten.</p>
+
+<div class="kpiRow">
+<div class="kpi">
+<b>Order-ID</b>
+<span id="thxOrderId">GB-XXXXXXX</span>
+</div>
+<div class="kpi">
+<b>Total</b>
+<span id="thxTotal">0 kr</span>
+</div>
+<div class="kpi">
+<b>Swish</b>
+<span>0735454748 (Order-ID som meddelande)</span>
+</div>
+</div>
+
+<div class="modalBtns">
+<button class="btn btnPrimary" type="button" onclick="copySwishText()">Kopiera swish-text</button>
+<button class="btn btnSecondary" type="button" onclick="closeThank()">Stäng</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// EmailJS (dina uppgifter)
+const EMAILJS_PUBLIC_KEY = "dq9P0vnICRwQAIS7q";
+const EMAILJS_SERVICE_ID = "service_d96juts";
+const EMAILJS_TEMPLATE_ID = "template_1215aes";
+const OWNER_EMAIL = "giftboxbyma@gmail.com";
+
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+const $ = (id) => document.getElementById(id);
+const toInt = (v) => {
+const n = parseInt(v, 10);
+return Number.isFinite(n) && n > 0 ? n : 0;
+};
+
+const PRICE = { "15":169, "20":229, "25":299, shippingDHL:80 };
+
+const addonNotes = {
+"": "",
+butterfly: "Färg: Endast guld",
+crown: "Färg: Guld eller silver (ange i meddelandet)",
+mrMrs: "Dekor – färg enligt lager",
+letterRoses: "Skriv önskad färg på bokstaven i rosor i meddelandet",
+bouquet: "Endast röd",
+flowerBear: "Färg: röd eller rosa (ange i meddelandet)",
+candleBear: "Färg: vit eller röd (ange i meddelandet)"
+};
+
+function genOrderId(){
+const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+let out = "GB-";
+for(let i=0;i<8;i++) out += chars[Math.floor(Math.random()*chars.length)];
+return out;
+}
+let CURRENT_ORDER_ID = genOrderId();
+
+function toggleDeliveryUI(){
+const delivery = $("deliveryMethod").value;
+$("shippingFields").classList.toggle("hidden", delivery !== "dhl");
+$("pickupInfo").style.display = (delivery === "pickup") ? "block" : "none";
+}
+
+function updateAddonUI(){
+const val = $("addonsSelect").value;
+$("addonNote").textContent = addonNotes[val] || "";
+
+if(!val){
+$("addonQty").value = "0";
+$("addonQty").disabled = true;
+$("addonQty").style.opacity = "0.7";
+}else{
+$("addonQty").disabled = false;
+$("addonQty").style.opacity = "1";
+}
+}
+
+function getAddonPrice(){
+const select = $("addonsSelect");
+const opt = select.options[select.selectedIndex];
+const unit = opt?.dataset?.price ? parseInt(opt.dataset.price, 10) : 0;
+const qty = toInt($("addonQty").value);
+return (Number.isFinite(unit) ? unit : 0) * qty;
+}
+
+function calcTotal(){
+let total = 0;
+
+const size = $("size").value;
+if (PRICE[size]) total += PRICE[size];
+
+const delivery = $("deliveryMethod").value;
+if (delivery === "dhl") total += PRICE.shippingDHL;
+
+total += getAddonPrice();
+
+$("totalSticky").textContent = total;
+return total;
+}
+
+function buildOrderDetails(){
+const sizeText = $("size").value ? `${$("size").value} cm` : "Ej valt";
+const deliveryText =
+$("deliveryMethod").value === "dhl" ? "Frakt via DHL – 80 kr" :
+($("deliveryMethod").value === "pickup" ? "Upphämtning (Malmö)" : "Ej valt");
+
+const addonVal = $("addonsSelect").value;
+let addonText = "Inga tillägg";
+if(addonVal){
+const label = $("addonsSelect").options[$("addonsSelect").selectedIndex].text;
+const qty = toInt($("addonQty").value);
+addonText = `${label} x${qty}`;
+}
+
+const addonInfo = $("addonNote").textContent ? `\nTillägg info: ${$("addonNote").textContent}` : "";
+const giftNote = $("giftNote").value ? `\nPresentkort: ${$("giftNote").value}` : "";
+
+return [
+`Order-ID: ${CURRENT_ORDER_ID}`,
+`Storlek: ${sizeText}`,
+`Leverans: ${deliveryText}`,
+`Tillägg: ${addonText}${addonInfo}`,
+`Önskat datum: ${$("deliveryDate").value || "-"}`,
+`Meddelande: ${$("message").value || "-"}`,
+giftNote ? giftNote : ""
+].filter(Boolean).join("\n");
+}
+
+function copySwishText(){
+const total = calcTotal();
+const text = `Swish 0735454748\nBelopp: ${total} kr\nMeddelande: ${CURRENT_ORDER_ID}`;
+navigator.clipboard.writeText(text);
+alert("Swish-text kopierad ✅");
+}
+window.copySwishText = copySwishText;
+
+function openThank(total){
+$("thxOrderId").textContent = CURRENT_ORDER_ID;
+$("thxTotal").textContent = `${total} kr`;
+$("overlay").style.display = "flex";
+$("overlay").setAttribute("aria-hidden","false");
+}
+function closeThank(){
+$("overlay").style.display = "none";
+$("overlay").setAttribute("aria-hidden","true");
+}
+window.closeThank = closeThank;
+
+function scrollToSend(){
+$("sendBtn").scrollIntoView({behavior:"smooth", block:"center"});
+}
+window.scrollToSend = scrollToSend;
+
+async function skickaBestallning(){
+$("ok").style.display = "none";
+$("err").style.display = "none";
+
+if(!$("contactFirstName").value || !$("contactLastName").value || !$("contactEmail").value || !$("contactPhone").value){
+$("err").style.display = "block";
+$("err").textContent = "Fyll i Förnamn, Efternamn, E-post och Telefon.";
+return;
+}
+if(!$("size").value){
+$("err").style.display = "block";
+$("err").textContent = "Välj storlek först.";
+return;
+}
+if(!$("deliveryMethod").value){
+$("err").style.display = "block";
+$("err").textContent = "Välj leveranssätt.";
+return;
+}
+if($("deliveryMethod").value === "dhl"){
+if(!$("street").value || !$("streetNo").value || !$("zip").value || !$("city").value){
+$("err").style.display = "block";
+$("err").textContent = "Fyll i adress (gata, nr, postnummer, stad) för DHL.";
+return;
+}
+}
+
+const total = calcTotal();
+const order_details = buildOrderDetails();
+
+const delivery_method =
+$("deliveryMethod").value === "dhl" ? "Frakt via DHL – 80 kr" : "Upphämtning Malmö";
+
+const address =
+$("deliveryMethod").value === "dhl"
+? `${$("street").value} ${$("streetNo").value}, ${$("zip").value} ${$("city").value}` +
+($("company").value ? `\nFöretag: ${$("company").value}` : "")
+: "Upphämtning Malmö (adress/tid skickas via SMS)";
+
+const params = {
+to_email: OWNER_EMAIL,
+order_id: CURRENT_ORDER_ID,
+name: `${$("contactFirstName").value} ${$("contactLastName").value}`,
+email: $("contactEmail").value,
+phone: $("contactPhone").value,
+delivery_method: delivery_method,
+address: address,
+delivery_date: $("deliveryDate").value || "-",
+order_details: order_details,
+total_price: total
+};
+
+const btn = $("sendBtn");
+const old = btn.textContent;
+btn.disabled = true;
+btn.style.opacity = "0.8";
+btn.textContent = "Skickar…";
+
+try{
+await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+
+$("ok").style.display = "block";
+$("ok").textContent =
+`✅ Beställning skickad!\n\nOrder-ID: ${CURRENT_ORDER_ID}\nTotal: ${total} kr\n\nSwish: 0735454748 (skriv Order-ID som meddelande)`;
+
+openThank(total);
+CURRENT_ORDER_ID = genOrderId();
+} catch(e){
+console.error(e);
+$("err").style.display = "block";
+$("err").textContent = `Det gick inte att skicka beställningen.\n\nFel: ${e?.message || e}`;
+} finally{
+btn.disabled = false;
+btn.style.opacity = "1";
+btn.textContent = old;
+}
+}
+window.skickaBestallning = skickaBestallning;
+
+// events
+["size","deliveryMethod","addonsSelect","addonQty","street","streetNo","zip","city","company"].forEach(id=>{
+const el = $(id);
+if(!el) return;
+el.addEventListener("change", ()=>{
+if(id==="deliveryMethod") toggleDeliveryUI();
+if(id==="addonsSelect") updateAddonUI();
+calcTotal();
+});
+el.addEventListener("input", ()=>{
+if(id==="deliveryMethod") toggleDeliveryUI();
+if(id==="addonsSelect") updateAddonUI();
+calcTotal();
+});
+});
+
+// start
+toggleDeliveryUI();
+updateAddonUI();
+calcTotal();
+</script>
+</body>
+</html>
